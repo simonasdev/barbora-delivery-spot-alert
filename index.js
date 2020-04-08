@@ -36,7 +36,7 @@ async function run() {
     hours.filter(({ available }) => available).map(({ deliveryTime }) => deliveryTime)
   )
 
-  if (availableTimes.length || true) {
+  if (availableTimes.length) {
     const message = availableTimes.join(', ')
 
     if (FCM_TOKEN) {
