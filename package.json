@@ -1,0 +1,18 @@
+{
+  "name": "barbora-delivery-spot-alert",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:simonasdev/barbora-delivery-spot-alert.git",
+  "author": "Simonas Gildutis <simonasgildutis@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node -r esm index.js",
+    "postinstall": "test -e .env || cp .example.env .env"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
+    "node-fetch": "^2.6.0",
+    "node-notifier": "^7.0.0"
+  }
+}
