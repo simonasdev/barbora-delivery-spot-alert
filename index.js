@@ -4,7 +4,7 @@ import notifier from 'node-notifier'
 
 env.config()
 
-const { LATEST_DELIVERY_INTERVAL_DAYS, COOKIE, FCM_SERVER_KEY, FCM_TOKEN } = process.env
+const { LATEST_DELIVERY_INTERVAL_IN_DAYS, COOKIE, FCM_SERVER_KEY, FCM_TOKEN } = process.env
 
 const deliveryTimesURL = 'https://pagrindinis.barbora.lt/api/eshop/v1/cart/deliveries'
 const deliveryRequestInfo = {
@@ -62,9 +62,9 @@ function filterAvailableTimes(list) {
     hours.filter(({ available }) => available).map(({ deliveryTime }) => deliveryTime)
   )
 
-  if (LATEST_DELIVERY_INTERVAL_DAYS) {
+  if (LATEST_DELIVERY_INTERVAL_IN_DAYS) {
     const latestDate = new Date()
-    latestDate.setDate(latestDate.getDate() + 1)
+    latestDate.setDate(latestDate.getDate() + LATEST_DELIVERY_INTERVAL_IN_DAYS)
     latestDate.setHours(23, 59, 59, 999)
 
     const timesBeforeLatestDate = availableTimes.filter(time => {
