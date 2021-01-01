@@ -64,7 +64,7 @@ function filterAvailableTimes(list) {
 
   if (LATEST_DELIVERY_INTERVAL_IN_DAYS) {
     const latestDate = new Date()
-    latestDate.setDate(latestDate.getDate() + LATEST_DELIVERY_INTERVAL_IN_DAYS)
+    latestDate.setDate(latestDate.getDate() + parseInt(LATEST_DELIVERY_INTERVAL_IN_DAYS))
     latestDate.setHours(23, 59, 59, 999)
 
     const timesBeforeLatestDate = availableTimes.filter(time => {
