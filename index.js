@@ -32,23 +32,7 @@ async function run() {
 
   const body = await response.json()
 
-  const availableTimes = body.deliveries[0].params.matrix.flatMap(({ hours }) => {
-    let availableHours = hours.filter(({ available }) => available)
-
-    if (LATEST_DELIVERY_INTERVAL_DAYS) {
-      const latestDate = new Date()
-      latestDate.setDate(latestDate.getDate() + 1)
-      latestDate.setHours(23,59,59,999)
-
-      availableHours = availableHours.filter(({ deliveryTime }) => {
-        const date = new Date(deliveryTime)
-
-        return date.getTime() < latestDate.getTime()
-      })
-    }
-
-    return availableHours.map(({ deliveryTime }) => deliveryTime)
-  })
+  const availableTimes = filterAvailableTimes(body.deliveries[0].params.matrix)
 
   if (availableTimes.length) {
     const message = availableTimes.join(', ')
@@ -71,6 +55,32 @@ async function run() {
       })
     }
   }
+}
+
+function filterAvailableTimes(list) {
+  const availableTimes = list.flatMap(({ hours }) =>
+    hours.filter(({ available }) => available).map(({ deliveryTime }) => deliveryTime)
+  )
+
+  if (LATEST_DELIVERY_INTERVAL_DAYS) {
+    const latestDate = new Date()
+    latestDate.setDate(latestDate.getDate() + 1)
+    latestDate.setHours(23, 59, 59, 999)
+
+    const timesBeforeLatestDate = availableTimes.filter(time => {
+      const date = new Date(time)
+
+      return date.getTime() < latestDate.getTime()
+    })
+
+    if (availableTimes.length && !timesBeforeLatestDate.length) {
+      console.log('Available times found but filtered by latest delivery date')
+    }
+
+    return timesBeforeLatestDate
+  }
+
+  return availableTimes
 }
 
 setInterval(run, 60000)
