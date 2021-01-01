@@ -4,7 +4,7 @@ import notifier from 'node-notifier'
 
 env.config()
 
-const { COOKIE, FCM_SERVER_KEY, FCM_TOKEN } = process.env
+const { LATEST_DELIVERY_INTERVAL_DAYS, COOKIE, FCM_SERVER_KEY, FCM_TOKEN } = process.env
 
 const deliveryTimesURL = 'https://pagrindinis.barbora.lt/api/eshop/v1/cart/deliveries'
 const deliveryRequestInfo = {
@@ -32,9 +32,23 @@ async function run() {
 
   const body = await response.json()
 
-  const availableTimes = body.deliveries[0].params.matrix.flatMap(({ hours }) =>
-    hours.filter(({ available }) => available).map(({ deliveryTime }) => deliveryTime)
-  )
+  const availableTimes = body.deliveries[0].params.matrix.flatMap(({ hours }) => {
+    let availableHours = hours.filter(({ available }) => available)
+
+    if (LATEST_DELIVERY_INTERVAL_DAYS) {
+      const latestDate = new Date()
+      latestDate.setDate(latestDate.getDate() + 1)
+      latestDate.setHours(23,59,59,999)
+
+      availableHours = availableHours.filter(({ deliveryTime }) => {
+        const date = new Date(deliveryTime)
+
+        return date.getTime() < latestDate.getTime()
+      })
+    }
+
+    return availableHours.map(({ deliveryTime }) => deliveryTime)
+  })
 
   if (availableTimes.length) {
     const message = availableTimes.join(', ')
