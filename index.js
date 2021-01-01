@@ -6,7 +6,7 @@ env.config()
 
 const { COOKIE, FCM_SERVER_KEY, FCM_TOKEN } = process.env
 
-const deliveryTimesURL = 'https://www.barbora.lt/api/eshop/v1/cart/deliveries'
+const deliveryTimesURL = 'https://pagrindinis.barbora.lt/api/eshop/v1/cart/deliveries'
 const deliveryRequestInfo = {
   headers: {
     Authorization: 'Basic YXBpa2V5OlNlY3JldEtleQ==',
