@@ -6,7 +6,8 @@ env.config()
 
 const { LATEST_DELIVERY_INTERVAL_IN_DAYS, COOKIE, FCM_SERVER_KEY, FCM_TOKEN } = process.env
 
-const deliveryTimesURL = 'https://pagrindinis.barbora.lt/api/eshop/v1/cart/deliveries'
+const host = 'https://pagrindinis.barbora.lt'
+const deliveryTimesURL = `${host}/api/eshop/v1/cart/deliveries`
 const deliveryRequestInfo = {
   headers: {
     Authorization: 'Basic YXBpa2V5OlNlY3JldEtleQ==',
@@ -21,7 +22,7 @@ const fcmRequestInfo = {
     Authorization: `key=${FCM_SERVER_KEY}`
   }
 }
-const title = 'Barbora available delivery times'
+const notificationTitle = 'Barbora available delivery times'
 
 async function run() {
   const response = await fetch(deliveryTimesURL, deliveryRequestInfo)
@@ -43,15 +44,16 @@ async function run() {
         body: JSON.stringify({
           to: FCM_TOKEN,
           notification: {
-            title,
+            title: notificationTitle,
             body: message
           }
         })
       })
     } else {
       notifier.notify({
-        title,
-        message
+        title: notificationTitle,
+        message,
+        open: host
       })
     }
   }
@@ -74,7 +76,7 @@ function filterAvailableTimes(list) {
     })
 
     if (availableTimes.length && !timesBeforeLatestDate.length) {
-      console.log('Available times found but filtered by latest delivery date')
+      console.log('Available times found but filtered by latest delivery interval')
     }
 
     return timesBeforeLatestDate
